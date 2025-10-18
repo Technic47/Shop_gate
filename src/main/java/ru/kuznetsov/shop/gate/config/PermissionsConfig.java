@@ -8,47 +8,50 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import ru.kuznetsov.shop.gate.enums.UserPermissionEnum;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
 @Component
 @AllArgsConstructor
 @NoArgsConstructor
-@PropertySource("classpath:role-model.yml")
+@PropertySource(value = "classpath:role-model.yaml", factory = YamlPropertySourceFactory.class)
 @ConfigurationProperties(prefix = "permissions")
 public class PermissionsConfig {
 
-    public final static String GET_PERMISSION = "get";
-    public final static String SAVE_PERMISSION = "save";
-    public final static String UPDATE_PERMISSION = "update";
-    public final static String DELETE_PERMISSION = "delete";
-
-    private Map<String, List<String>> accessRights;
+    private List<String> get;
+    private List<String> save;
+    private List<String> update;
+    private List<String> delete;
 
     @Bean
     public List<String> gettingPermissions() {
-        return accessRights.get(GET_PERMISSION);
+        return get;
     }
 
     @Bean
     public List<String> savingPermissions() {
-        return accessRights.get(SAVE_PERMISSION);
+        return save;
     }
 
     @Bean
     public List<String> updatingPermissions() {
-        return accessRights.get(UPDATE_PERMISSION);
+        return update;
     }
 
     @Bean
     public List<String> deletePermissions() {
-        return accessRights.get(DELETE_PERMISSION);
+        return delete;
     }
 
-    public boolean hasAccess(String userRole, String permission) {
-        return accessRights.get(permission).contains(userRole);
+    public boolean hasAccess(String userRole, UserPermissionEnum permission) {
+        return switch (permission) {
+            case GET -> get.contains(userRole);
+            case SAVE -> save.contains(userRole);
+            case UPDATE -> update.contains(userRole);
+            case DELETE -> delete.contains(userRole);
+        };
     }
 }

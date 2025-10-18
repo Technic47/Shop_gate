@@ -51,6 +51,12 @@ keycloak:
 microservices:
   baseUrl: ${BASE_URL}
 
+web:
+  client:
+    timeOut: 3000
+    retry: 2000
+    max-attempts: 3
+
 logging:
   level:
     org.springframework.security: TRACE
