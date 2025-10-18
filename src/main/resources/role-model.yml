@@ -1,0 +1,14 @@
+permissions:
+  get:
+    - ADMIN
+    - USER
+    - SELLER
+  save:
+    - ADMIN
+    - SELLER
+  update:
+    - ADMIN
+    - SELLER
+  delete:
+    - ADMIN
+    - SELLER
