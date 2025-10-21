@@ -17,6 +17,7 @@ import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +50,13 @@ public abstract class AbstractContractImpl<E extends AbstractDto> implements Abs
     }
 
     @Override
-    public boolean create(E entity) {
-        return sendPostRequest(getModuleName(), null, entity, Boolean.class).get(0);
+    public E create(E entity) {
+        return sendPostRequest(getModuleName(), null, entity, clazz).get(0);
+    }
+
+    @Override
+    public Collection<E> createBatch(Collection<E> entities) {
+        return sendPostRequest(getModuleName() + "/batch", null, entities, clazz);
     }
 
     @Override

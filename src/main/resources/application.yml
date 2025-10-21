@@ -60,3 +60,6 @@ web:
 logging:
   level:
     org.springframework.security: TRACE
+
+operation:
+  timeout: 1000
