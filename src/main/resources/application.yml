@@ -2,15 +2,6 @@ spring:
   application:
     name: Gate_module
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${GATE_DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASS}
-  jpa:
-    generate-ddl: true
-    open-in-view: false
-
   kafka:
     bootstrap-servers: ${KAFKA_URL}
     consumer:
@@ -48,18 +39,6 @@ keycloak:
   clientId: ${KEYCLOAK_CLIENT_ID}
   clientSecret: ${KEYCLOAK_CLIENT_SECRET}
 
-microservices:
-  baseUrl: ${BASE_URL}
-
-web:
-  client:
-    timeOut: 3000
-    retry: 2000
-    max-attempts: 3
-
 logging:
   level:
     org.springframework.security: TRACE
-
-operation:
-  timeout: 1000

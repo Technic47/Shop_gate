@@ -4,27 +4,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kuznetsov.shop.gate.service.business.AddressContractImpl;
+import ru.kuznetsov.shop.represent.contract.business.AddressContract;
 import ru.kuznetsov.shop.represent.dto.AddressDto;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/address")
-public class AddressController extends AbstractController<AddressDto, AddressContractImpl> {
+public class AddressController extends AbstractController<AddressDto, AddressContract> {
 
-    protected AddressController(AddressContractImpl service) {
+    protected AddressController(AddressContract service) {
         super(service);
     }
 
     @Override
     public ResponseEntity<AddressDto> add(AddressDto entity) {
-        return ResponseEntity.ok(service.create(entity));
+        return ResponseEntity.ok(contract.create(entity));
     }
 
     @Override
     public ResponseEntity<Collection<AddressDto>> addBatch(Collection<AddressDto> addressDtoCollection) {
-        return ResponseEntity.ok(service.createBatch(addressDtoCollection));
+        return ResponseEntity.ok(contract.createBatch(addressDtoCollection));
     }
 
     @Override

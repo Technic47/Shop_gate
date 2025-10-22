@@ -4,27 +4,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kuznetsov.shop.gate.service.business.ProductCategoryContractImpl;
+import ru.kuznetsov.shop.represent.contract.business.ProductCategoryContract;
 import ru.kuznetsov.shop.represent.dto.ProductCategoryDto;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/product-category")
-public class ProductCategoryController extends AbstractController<ProductCategoryDto, ProductCategoryContractImpl> {
+public class ProductCategoryController extends AbstractController<ProductCategoryDto, ProductCategoryContract> {
 
-    protected ProductCategoryController(ProductCategoryContractImpl service) {
+    protected ProductCategoryController(ProductCategoryContract service) {
         super(service);
     }
 
     @Override
     public ResponseEntity<ProductCategoryDto> add(ProductCategoryDto entity) {
-        return ResponseEntity.ok(service.create(entity));
+        return ResponseEntity.ok(contract.create(entity));
     }
 
     @Override
     public ResponseEntity<Collection<ProductCategoryDto>> addBatch(Collection<ProductCategoryDto> productCategoryDtoCollection) {
-        return ResponseEntity.ok(service.createBatch(productCategoryDtoCollection));
+        return ResponseEntity.ok(contract.createBatch(productCategoryDtoCollection));
     }
 
     @Override

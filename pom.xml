@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.technic47</groupId>
         <artifactId>shop-spring-boot-starter</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.10</version>
     </parent>
 
     <groupId>ru.kuznetsov.shop</groupId>
@@ -24,10 +24,6 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
@@ -37,10 +33,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
@@ -53,15 +45,11 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>${keycloak-admin-client.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>io.github.technic47</groupId>
-            <artifactId>data-model-dto</artifactId>
-            <version>${data-model-dto.version}</version>
+            <artifactId>data-access</artifactId>
+            <version>${data-access.version}</version>
         </dependency>
 
         <dependency>
@@ -79,7 +67,7 @@
     <build>
         <plugins>
         </plugins>
-        <finalName>Saver_module</finalName>
+        <finalName>Gate_module</finalName>
     </build>
 
 </project>

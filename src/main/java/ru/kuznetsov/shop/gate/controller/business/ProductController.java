@@ -4,16 +4,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kuznetsov.shop.gate.service.business.ProductContractImpl;
+import ru.kuznetsov.shop.represent.contract.business.ProductContract;
 import ru.kuznetsov.shop.represent.dto.ProductDto;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/product")
-public class ProductController extends AbstractController<ProductDto, ProductContractImpl> {
+public class ProductController extends AbstractController<ProductDto, ProductContract> {
 
-    protected ProductController(ProductContractImpl service) {
+    protected ProductController(ProductContract service) {
         super(service);
     }
 
