@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.kuznetsov.shop.business.access.service.OperationService;
 import ru.kuznetsov.shop.gate.config.KeycloakConfiguration;
 import ru.kuznetsov.shop.gate.dto.LoginPasswordDto;
 
@@ -16,7 +19,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class Keycloakservice implements AuthService {
+public class KeycloakAuthService implements AuthService {
 
     private static final String REALMS = "/realms";
     private static final String SHOP_REALM = "/shop";
@@ -28,6 +31,7 @@ public class Keycloakservice implements AuthService {
     private final KeycloakConfiguration config;
 
     private final Keycloak keycloakClient;
+    Logger logger = LoggerFactory.getLogger(OperationService.class);
 
     public List<UserRepresentation> getInfo(String userName) {
 

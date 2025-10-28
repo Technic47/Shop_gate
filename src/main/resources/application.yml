@@ -42,3 +42,6 @@ keycloak:
 logging:
   level:
     org.springframework.security: TRACE
+
+microservices:
+  baseUrl: ${BASE_URL}
