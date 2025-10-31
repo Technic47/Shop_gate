@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.dto.LoginPasswordDto;
+import ru.kuznetsov.shop.gate.dto.TokenDto;
 import ru.kuznetsov.shop.gate.service.AuthService;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/auth")
@@ -14,7 +17,17 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<String> auth(@RequestBody LoginPasswordDto authHeader) {
-        return ResponseEntity.ok(authService.loginAuth(authHeader));
+    public ResponseEntity<TokenDto> auth(@RequestBody LoginPasswordDto authHeader) {
+        return authService.getToken(authHeader);
+    }
+
+    @PostMapping("/check/token")
+    public ResponseEntity<Boolean> checkToken(@RequestHeader("bearer") String token) {
+        return ResponseEntity.ok(authService.isTokenValid(token));
+    }
+
+    @PostMapping("/check/roles")
+    public ResponseEntity<Collection<String>> checkRoles(@RequestHeader("bearer") String token) {
+        return ResponseEntity.ok(authService.getUserRoles(token));
     }
 }
