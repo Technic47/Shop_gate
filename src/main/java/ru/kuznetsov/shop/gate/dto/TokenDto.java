@@ -11,6 +11,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenDto {
+
     private String token;
     private long expiresIn;
     private long refreshExpiresIn;

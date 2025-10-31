@@ -17,17 +17,17 @@ public class GateConfig {
 
     private final KeycloakConfiguration adminConfig;
 
-    @Bean
-    @Qualifier("admin")
-    public Keycloak keycloak() {
-        return KeycloakBuilder.builder()
-                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                .serverUrl(adminConfig.getServerUrl())
-                .realm(adminConfig.getRealm())
-                .clientId(adminConfig.getClientId())
-                .clientSecret(adminConfig.getClientSecret())
-                .build();
-    }
+//    @Bean
+//    @Qualifier("admin")
+//    public Keycloak keycloak() {
+//        return KeycloakBuilder.builder()
+//                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+//                .serverUrl(adminConfig.getServerUrl())
+//                .realm(adminConfig.getRealm())
+//                .clientId(adminConfig.getClientId())
+//                .clientSecret(adminConfig.getClientSecret())
+//                .build();
+//    }
 
 //    @Bean
 //    public Keycloak keycloak() {

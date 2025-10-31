@@ -32,7 +32,6 @@ import java.util.Map;
 public class KeycloakAuthService implements AuthService {
 
     private static final String REALMS = "/realms";
-    private static final String SHOP_REALM = "/shop";
     private static final String PROTOCOL = "/protocol";
     private static final String OPENID_CONNECT = "/openid-connect";
     private static final String TOKEN = "/token";
@@ -41,7 +40,6 @@ public class KeycloakAuthService implements AuthService {
 
     private final KeycloakConfiguration config;
 
-    private final Keycloak adminClient;
     Logger logger = LoggerFactory.getLogger(OperationService.class);
 
     public ResponseEntity<TokenDto> getToken(LoginPasswordDto authHeader) {
