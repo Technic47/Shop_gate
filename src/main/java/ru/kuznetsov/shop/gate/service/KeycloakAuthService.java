@@ -73,7 +73,7 @@ public class KeycloakAuthService implements AuthService {
 
         MultiValueMap<String, String> introspectParams = new LinkedMultiValueMap<>();
         introspectParams.add("client_id", config.getClientId());
-        introspectParams.add("token", token);
+        introspectParams.add("token", token.replace("Bearer ", ""));
         introspectParams.add("client_secret", config.getClientSecret());
 
         var request = new HttpEntity<>(introspectParams, headers);
@@ -101,7 +101,7 @@ public class KeycloakAuthService implements AuthService {
     @Override
     public Collection<String> getUserRoles(String token) {
         try {
-            JWT jwt = JWTParser.parse(token);
+            JWT jwt = JWTParser.parse(token.replace("Bearer ", ""));
             return ((Map<String, List<String>>) jwt.getJWTClaimsSet().getClaim("realm_access"))
                     .get("roles")
                     .stream()

@@ -1,5 +1,6 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,42 +29,42 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<E> getById(@RequestHeader("bearer") String token, @PathVariable Long id) {
+    public ResponseEntity<E> getById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
         if (hasAccess(token, GET)) {
             return ResponseEntity.ok(contractService.getById(id));
         } else return ResponseEntity.status(401).build();
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<E>> getAll(@RequestHeader("bearer") String token) {
+    public ResponseEntity<List<E>> getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         if (hasAccess(token, GET)) {
             return ResponseEntity.ok(contractService.getAll());
         } else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<E> add(@RequestHeader("bearer") String token, @RequestBody E entity) {
+    public ResponseEntity<E> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody E entity) {
         if (hasAccess(token, SAVE)) {
             return ResponseEntity.ok(contractService.create(entity));
         } else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/add/batch")
-    public ResponseEntity<Collection<E>> addBatch(@RequestHeader("bearer") String token, @RequestBody Collection<E> entity) {
+    public ResponseEntity<Collection<E>> addBatch(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody Collection<E> entity) {
         if (hasAccess(token, SAVE)) {
             return ResponseEntity.ok(contractService.createBatch(entity));
         } else return ResponseEntity.status(401).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<E> update(@RequestHeader("bearer") String token, @PathVariable Long id, @RequestBody E entity) {
+    public ResponseEntity<E> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id, @RequestBody E entity) {
         if (hasAccess(token, UPDATE)) {
             return new ResponseEntity("Method not implemented yet", HttpStatus.NOT_IMPLEMENTED);
         } else return ResponseEntity.status(401).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@RequestHeader("bearer") String token, @PathVariable Long id) {
+    public ResponseEntity delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
         if (hasAccess(token, UPDATE)) {
             contractService.delete(id);
             return ResponseEntity.ok().build();

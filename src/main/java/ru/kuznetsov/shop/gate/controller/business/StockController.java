@@ -1,5 +1,6 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
@@ -20,14 +21,14 @@ public class StockController extends AbstractController<StockDto, StockContract>
     }
 
     @GetMapping("/{id}/store")
-    public ResponseEntity<Collection<StockDto>> getAllByStoreId(@RequestHeader("bearer") String token, @PathVariable long id) {
+    public ResponseEntity<Collection<StockDto>> getAllByStoreId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable long id) {
         if (hasAccess(token, GET)) {
             return ResponseEntity.ok(contractService.getAllByStoreId(id));
         } else return ResponseEntity.status(401).build();
     }
 
     @GetMapping("/{id}/product")
-    public ResponseEntity<Collection<StockDto>> getAllByProductId(@RequestHeader("bearer") String token, @PathVariable long id) {
+    public ResponseEntity<Collection<StockDto>> getAllByProductId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable long id) {
         if (hasAccess(token, GET)) {
             return ResponseEntity.ok(contractService.getAllByProductId(id));
         } else return ResponseEntity.status(401).build();

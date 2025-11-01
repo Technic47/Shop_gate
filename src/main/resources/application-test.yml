@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: Gate_module
+
+  kafka:
+    bootstrap-servers: host.docker.internal:9092
+    consumer:
+      group-id: test
+
+  cache:
+    type: redis
+
+  data:
+    redis:
+      host: host.docker.internal
+      port: 6379
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/shop
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/shop
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: shop-app-test
+            client-secret: 0nKwcagdO62xNuEmjMt2lJms2qzdr2A5
+            scope: openid
+
+keycloak:
+  serverUrl: http://localhost:8180
+  realm: shop
+  username: shop-test
+  password: test
+  clientId: shop-app-test
+  clientSecret: 0nKwcagdO62xNuEmjMt2lJms2qzdr2A5
+
+logging:
+  level:
+    org.springframework.security: TRACE
+
+microservices:
+  baseUrl: host.docker.internal
