@@ -12,15 +12,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.kuznetsov.shop.gate.dto.LoginPasswordDto;
-import ru.kuznetsov.shop.gate.dto.TokenDto;
+import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
+import ru.kuznetsov.shop.represent.dto.auth.TokenDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,16 +38,14 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected ObjectMapper om;
 
-    protected TokenDto getToken(String login, String pass) throws Exception {
-        LoginPasswordDto request = new LoginPasswordDto(login, pass);
+    @MockitoBean
+    protected AuthContract authService;
 
-        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH, request)
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
+    protected TokenDto getToken(String login, String pass) {
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken(login + ":" + pass);
 
-        String json = mvcResult.getResponse().getContentAsString();
-        return om.readValue(json, TokenDto.class);
+        return tokenDto;
     }
 
     protected ResultActions sendRequestWithAuthToken(HttpMethod httpMethod, String apiPath, String login, String pass) throws Exception {

@@ -1,9 +1,18 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.kuznetsov.shop.represent.contract.business.ProductCategoryContract;
 import ru.kuznetsov.shop.represent.dto.ProductCategoryDto;
 
 class ProductCategoryControllerTest extends AbstractControllerTest<ProductCategoryDto, ProductCategoryContract> {
+
+    @MockitoBean
+    private ProductCategoryContract contract;
+
+    @Override
+    protected ProductCategoryContract getContract() {
+        return contract;
+    }
 
     @Override
     protected String getApiPath() {

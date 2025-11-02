@@ -1,8 +1,8 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.kuznetsov.shop.gate.controller.AbstractIntegrationTest;
 import ru.kuznetsov.shop.represent.contract.business.AbstractContract;
 import ru.kuznetsov.shop.represent.dto.AbstractDto;
@@ -18,8 +18,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractContract<E>> extends AbstractIntegrationTest {
 
-    @MockitoBean
-    protected S contract;
+    @BeforeEach
+    void setup() {
+        S contract = getContract();
+
+        doReturn(true)
+                .when(authService)
+                .isTokenValid(any(String.class));
+
+        doReturn(List.of("USER"))
+                .when(authService)
+                .getUserRoles("Bearer " + TEST_USER_LOGIN + ":" + TEST_USER_PASSWORD);
+
+        doReturn(List.of("ADMIN"))
+                .when(authService)
+                .getUserRoles("Bearer " + TEST_ADMIN_LOGIN + ":" + TEST_ADMIN_PASSWORD);
+
+        doReturn(getMockDto())
+                .when(contract)
+                .getById(any(Long.class));
+
+        doNothing()
+                .when(contract)
+                .delete(any(Long.class));
+    }
+
+    protected abstract S getContract();
 
     protected abstract String getApiPath();
 
@@ -27,10 +51,6 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
 
     @Test
     void getById_return_200_with_User() throws Exception {
-        doReturn(getMockDto())
-                .when(contract)
-                .getById(any(Long.class));
-
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1", TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -38,10 +58,6 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
 
     @Test
     void getById_return_200_with_Admin() throws Exception {
-        doReturn(getMockDto())
-                .when(contract)
-                .getById(any(Long.class));
-
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -56,10 +72,6 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
 
     @Test
     void getAll_return_200_with_User() throws Exception {
-        doReturn(getMockDto())
-                .when(contract)
-                .getById(any(Long.class));
-
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -67,10 +79,6 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
 
     @Test
     void getAll_return_200_with_Admin() throws Exception {
-        doReturn(getMockDto())
-                .when(contract)
-                .getById(any(Long.class));
-
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -97,7 +105,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
         E mockDto = getMockDto();
 
         doReturn(mockDto)
-                .when(contract)
+                .when(getContract())
                 .create((E) any(AbstractDto.class));
 
         sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add", mockDto, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
@@ -128,7 +136,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
         E mockDto = getMockDto();
 
         doReturn(List.of(mockDto))
-                .when(contract)
+                .when(getContract())
                 .createBatch(any(Collection.class));
 
         sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add/batch", List.of(mockDto), TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
@@ -181,10 +189,6 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
 
     @Test
     void delete_return_200_with_Admin() throws Exception {
-        doNothing()
-                .when(contract)
-                .delete(any(Long.class));
-
         sendRequestWithAuthToken(HttpMethod.DELETE, getApiPath() + "/1", null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
 import ru.kuznetsov.shop.gate.enums.UserPermissionEnum;
-import ru.kuznetsov.shop.gate.service.AuthService;
+import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.AbstractContract;
 import ru.kuznetsov.shop.represent.dto.AbstractDto;
 
@@ -19,10 +19,10 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     protected final S contractService;
 
-    private final AuthService authService;
+    private final AuthContract authService;
     private final PermissionsConfig permissionsConfig;
 
-    public AbstractController(S contractService, AuthService authService, PermissionsConfig permissionsConfig) {
+    public AbstractController(S contractService, AuthContract authService, PermissionsConfig permissionsConfig) {
         this.contractService = contractService;
         this.authService = authService;
         this.permissionsConfig = permissionsConfig;

@@ -1,10 +1,14 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.kuznetsov.shop.represent.contract.business.StoreContract;
 import ru.kuznetsov.shop.represent.dto.StoreDto;
 
 class StoreControllerTest extends AbstractControllerTest<StoreDto, StoreContract> {
+
+    @MockitoBean
+    private StoreContract contract;
 
     @Test
     void getAllStores() {
@@ -12,6 +16,11 @@ class StoreControllerTest extends AbstractControllerTest<StoreDto, StoreContract
 
     @Test
     void getAllStockByStoreId() {
+    }
+
+    @Override
+    protected StoreContract getContract() {
+        return contract;
     }
 
     @Override

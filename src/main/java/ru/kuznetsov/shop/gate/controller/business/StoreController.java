@@ -4,7 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
-import ru.kuznetsov.shop.gate.service.AuthService;
+import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.StoreContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
 import ru.kuznetsov.shop.represent.dto.StoreDto;
@@ -18,7 +18,7 @@ import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
 @RequestMapping("/store")
 public class StoreController extends AbstractController<StoreDto, StoreContract> {
 
-    public StoreController(StoreContract contractService, AuthService authService, PermissionsConfig permissionsConfig) {
+    public StoreController(StoreContract contractService, AuthContract authService, PermissionsConfig permissionsConfig) {
         super(contractService, authService, permissionsConfig);
     }
 

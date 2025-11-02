@@ -1,20 +1,18 @@
 package ru.kuznetsov.shop.gate.controller;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.MvcResult;
-import ru.kuznetsov.shop.gate.dto.LoginPasswordDto;
-import ru.kuznetsov.shop.gate.dto.TokenDto;
+import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,30 +21,32 @@ class AuthControllerTest extends AbstractIntegrationTest {
 
     protected final static String CHECK_TOKEN = "/check/token";
     protected final static String CHECK_ROLES = "/check/roles";
+    protected final static String MOCK_TOKEN = "sghsfhfhrse5g";
 
     @Test
-    void getToken_return_200() throws Exception {
-        TokenDto response = getToken(TEST_USER_LOGIN, TEST_USER_PASSWORD);
+    void getToken_return_200_user() throws Exception {
+        LoginPasswordDto request = new LoginPasswordDto(TEST_USER_LOGIN, TEST_USER_PASSWORD);
 
-        assertNotNull(response);
-        assertNotNull(response.getToken());
-        assertNotNull(response.getRefreshToken());
-        assertNotNull(response.getTokenType());
-        assertNotNull(response.getSessionState());
-        assertNotNull(response.getScope());
-        assertNull(response.getError());
-        assertNull(response.getErrorDescription());
-        assertTrue(response.getExpiresIn() > 0);
+        sendRequest(HttpMethod.POST, AUTH_API_PATH, request)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
-        assertDoesNotThrow(() -> JWTParser.parse(response.getToken().replace("Bearer ", "")));
+    @Test
+    void getToken_return_200_admin() throws Exception {
+        LoginPasswordDto request = new LoginPasswordDto(TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD);
 
-        Map<String, Object> claimsSet = JWTParser.parse(response.getToken().replace("Bearer ", "")).getJWTClaimsSet().getClaims();
-
-        assertTrue(((Date) claimsSet.get("exp")).after(new Date()));
+        sendRequest(HttpMethod.POST, AUTH_API_PATH, request)
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
     void getToken_return_401_wrong_login() throws Exception {
+        doThrow(RuntimeException.class)
+                .when(authService)
+                .getToken(any(LoginPasswordDto.class));
+
         LoginPasswordDto request = new LoginPasswordDto(TEST_USER_LOGIN + "123", TEST_USER_PASSWORD);
 
         sendRequest(HttpMethod.POST, AUTH_API_PATH, request)
@@ -56,10 +56,12 @@ class AuthControllerTest extends AbstractIntegrationTest {
 
     @Test
     void checkToken_return_true() throws Exception {
-        TokenDto response = getToken(TEST_USER_LOGIN, TEST_USER_PASSWORD);
+        doReturn(true)
+                .when(authService)
+                .isTokenValid(any(String.class));
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
 
         MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, headers, null)
                 .andDo(print())
@@ -69,39 +71,40 @@ class AuthControllerTest extends AbstractIntegrationTest {
         assertTrue(Boolean.parseBoolean(mvcResult.getResponse().getContentAsString()));
     }
 
-//    @Test
-//    void checkToken_return_false() throws Exception {
-//        TokenDto response = getToken(TEST_USER_LOGIN, TEST_USER_PASSWORD);
-//
-//        JWT jwt = JWTParser.parse(response.getToken().replace("Bearer ", ""));
-//        Map<String, Object> claimsSet = jwt.getJWTClaimsSet().getClaims();
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
-//
-//        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, headers, null)
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        assertTrue(Boolean.parseBoolean(mvcResult.getResponse().getContentAsString()));
-//    }
-
     @Test
-    void checkRoles() throws Exception {
-        TokenDto response = getToken(TEST_USER_LOGIN, TEST_USER_PASSWORD);
-
-        JWT jwt = JWTParser.parse(response.getToken().replace("Bearer ", ""));
-        String[] roleList = ((Map<String, List<String>>) jwt.getJWTClaimsSet().getClaim("realm_access"))
-                .get("roles")
-                .stream()
-                .filter(role -> role.startsWith("ROLE_"))
-                .map(role -> role.substring(5))
-                .toList()
-                .toArray(new String[0]);
+    void checkToken_return_false() throws Exception {
+        doReturn(false)
+                .when(authService)
+                .isTokenValid(any(String.class));
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
+
+        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, headers, null)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertFalse(Boolean.parseBoolean(mvcResult.getResponse().getContentAsString()));
+    }
+
+    @Test
+    void checkToken_return_400_no_token() throws Exception {
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN)
+                .andDo(print())
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    void checkRoles_return_200() throws Exception {
+        String testRole = "TEST";
+
+        doReturn(List.of(testRole))
+                .when(authService)
+                .getUserRoles(any(String.class));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
 
         MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_ROLES, headers, null)
                 .andDo(print())
@@ -111,6 +114,14 @@ class AuthControllerTest extends AbstractIntegrationTest {
         String json = mvcResult.getResponse().getContentAsString();
         String[] foundItems = om.readValue(json, String[].class);
 
-        assertArrayEquals(roleList, foundItems);
+        assertEquals(1, foundItems.length);
+        assertEquals(testRole, foundItems[0]);
+    }
+
+    @Test
+    void checkRoles_return_400_no_token() throws Exception {
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_ROLES)
+                .andDo(print())
+                .andExpect(status().is(400));
     }
 }

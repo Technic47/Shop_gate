@@ -2,11 +2,12 @@ package ru.kuznetsov.shop.gate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kuznetsov.shop.gate.dto.LoginPasswordDto;
-import ru.kuznetsov.shop.gate.dto.TokenDto;
-import ru.kuznetsov.shop.gate.service.AuthService;
+import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
+import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
+import ru.kuznetsov.shop.represent.dto.auth.TokenDto;
 
 import java.util.Collection;
 
@@ -15,11 +16,15 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthContract authService;
 
     @PostMapping
     public ResponseEntity<TokenDto> getToken(@RequestBody LoginPasswordDto authHeader) {
-        return authService.getToken(authHeader);
+        try {
+            return ResponseEntity.ok(authService.getToken(authHeader));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/check/token")

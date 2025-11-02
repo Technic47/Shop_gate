@@ -51,6 +51,11 @@
             <artifactId>data-access</artifactId>
             <version>${data-access.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.technic47</groupId>
+            <artifactId>auth</artifactId>
+            <version>${auth-keycloak.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
