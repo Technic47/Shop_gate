@@ -38,6 +38,10 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
                 .when(contract)
                 .getById(any(Long.class));
 
+        doReturn(List.of(getMockDto()))
+                .when(contract)
+                .getAll();
+
         doNothing()
                 .when(contract)
                 .delete(any(Long.class));

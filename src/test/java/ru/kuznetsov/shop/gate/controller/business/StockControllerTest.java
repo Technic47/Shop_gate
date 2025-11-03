@@ -1,9 +1,15 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.kuznetsov.shop.represent.contract.business.StockContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class StockControllerTest extends AbstractControllerTest<StockDto, StockContract> {
 
@@ -11,11 +17,67 @@ class StockControllerTest extends AbstractControllerTest<StockDto, StockContract
     private StockContract contract;
 
     @Test
-    void getAllByStoreId() {
+    void getAllByStoreId_return_200_with_user() throws Exception {
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void getAllByProductId() {
+    void getAllByStoreId_return_200_with_admin() throws Exception {
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByStoreId_return_401_with_user_invalid_token() throws Exception {
+        doReturn(false)
+                .when(authService)
+                .isTokenValid(any(String.class));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().is(401));
+    }
+
+    @Test
+    void getAllByStoreId_return_400_with_user_no_token() throws Exception {
+        sendRequest(HttpMethod.GET, getApiPath() + "/1/store")
+                .andDo(print())
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    void getAllByProductId_return_200_with_user() throws Exception {
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByProductId_return_200_with_admin() throws Exception {
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByProductId_return_401_with_user_invalid_token() throws Exception {
+        doReturn(false)
+                .when(authService)
+                .isTokenValid(any(String.class));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().is(401));
+    }
+
+    @Test
+    void getAllByProductId_return_400_with_user_no_token() throws Exception {
+        sendRequest(HttpMethod.GET, getApiPath() + "/1/product")
+                .andDo(print())
+                .andExpect(status().is(400));
     }
 
     @Override

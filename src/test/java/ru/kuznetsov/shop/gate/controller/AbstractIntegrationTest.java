@@ -15,6 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.dto.auth.TokenDto;
 
@@ -54,7 +56,7 @@ public abstract class AbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
 
-        return sendRequest(httpMethod, apiPath, headers, null);
+        return sendRequest(httpMethod, apiPath, new LinkedMultiValueMap<>(), headers, null);
     }
 
     protected ResultActions sendRequestWithAuthToken(HttpMethod httpMethod, String apiPath, Object body, String login, String pass) throws Exception {
@@ -63,19 +65,37 @@ public abstract class AbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
 
-        return sendRequest(httpMethod, apiPath, headers, body);
+        return sendRequest(httpMethod, apiPath, new LinkedMultiValueMap<>(), headers, body);
+    }
+
+    protected ResultActions sendRequestWithAuthToken(HttpMethod httpMethod, String apiPath, MultiValueMap<String, String> params, Object body, String login, String pass) throws Exception {
+        TokenDto response = getToken(login, pass);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
+
+        return sendRequest(httpMethod, apiPath, params, headers, body);
     }
 
     protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath) throws Exception {
-        return sendRequest(httpMethod, apiPath, new HttpHeaders(), null);
+        return sendRequest(httpMethod, apiPath, new LinkedMultiValueMap<>(), new HttpHeaders(), null);
+    }
+
+    protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath, MultiValueMap<String, String> params) throws Exception {
+        return sendRequest(httpMethod, apiPath, params, new HttpHeaders(), null);
     }
 
     protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath, Object body) throws Exception {
-        return sendRequest(httpMethod, apiPath, new HttpHeaders(), body);
+        return sendRequest(httpMethod, apiPath, new LinkedMultiValueMap<>(), new HttpHeaders(), body);
     }
 
-    protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath, HttpHeaders httpHeaders, Object body) throws Exception {
+    protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath, MultiValueMap<String, String> params, Object body) throws Exception {
+        return sendRequest(httpMethod, apiPath, params, new HttpHeaders(), body);
+    }
+
+    protected ResultActions sendRequest(HttpMethod httpMethod, String apiPath, MultiValueMap<String, String> params, HttpHeaders httpHeaders, Object body) throws Exception {
         return mockMvc.perform(request(httpMethod, apiPath)
+                .params(params)
                 .headers(httpHeaders)
                 .content(om.writeValueAsString(body))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON));
