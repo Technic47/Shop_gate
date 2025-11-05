@@ -1,14 +1,21 @@
 permissions:
-  get:
-    - ADMIN
-    - USER
-    - SELLER
-  save:
-    - ADMIN
-    - SELLER
-  update:
-    - ADMIN
-    - SELLER
-  delete:
-    - ADMIN
-    - SELLER
+  api_methods:
+    GET:
+      - ADMIN
+      - USER
+      - SELLER
+    GET_ALL:
+      - ADMIN
+      - USER
+      - SELLER
+    GET_ALL_BULK:
+      - ADMIN
+    SAVE:
+      - ADMIN
+      - SELLER
+    UPDATE:
+      - ADMIN
+      - SELLER
+    DELETE:
+      - ADMIN
+      - SELLER

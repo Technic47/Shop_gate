@@ -1,5 +1,6 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import jakarta.annotation.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import ru.kuznetsov.shop.represent.contract.business.AbstractContract;
 import ru.kuznetsov.shop.represent.dto.AbstractDto;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.*;
 
@@ -36,8 +37,13 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<E>> getAll(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        if (hasAccess(token, GET)) {
+    public abstract ResponseEntity<Collection<E>> getAllForUser(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @Nullable @RequestParam(required = false) Map<String, String> reqParam);
+
+    @GetMapping("/all/bulk")
+    public ResponseEntity<Collection<E>> getAllBulk(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        if (hasAccess(token, GET_ALL_BULK)) {
             return ResponseEntity.ok(contractService.getAll());
         } else return ResponseEntity.status(401).build();
     }

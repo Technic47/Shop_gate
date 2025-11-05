@@ -1,16 +1,19 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
+import jakarta.annotation.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
+import ru.kuznetsov.shop.gate.util.TokenUtils;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.StoreContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
 import ru.kuznetsov.shop.represent.dto.StoreDto;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
 
@@ -22,15 +25,21 @@ public class StoreController extends AbstractController<StoreDto, StoreContract>
         super(contractService, authService, permissionsConfig);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<StoreDto>> getAllStores(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestParam(required = false) Long id,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) Long addressId
-    ) {
+    @Override
+    public ResponseEntity<Collection<StoreDto>> getAllForUser(String token, @Nullable Map<String, String> reqParam) {
         if (hasAccess(token, GET)) {
-            return ResponseEntity.ok(contractService.getAll(id, name, addressId));
+            UUID userId = TokenUtils.getUserIdFromToken(token);
+
+            if (reqParam != null) {
+                return ResponseEntity.ok(contractService.getAll(
+                        Long.parseLong(reqParam.get("id")),
+                        reqParam.get("name"),
+                        Long.parseLong(reqParam.get("addressId")),
+                        userId));
+            } else {
+                return ResponseEntity.ok(contractService.getAll(null, null, null, userId));
+            }
+
         } else return ResponseEntity.status(401).build();
     }
 

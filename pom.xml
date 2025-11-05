@@ -40,11 +40,6 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak-admin-client.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>io.github.technic47</groupId>

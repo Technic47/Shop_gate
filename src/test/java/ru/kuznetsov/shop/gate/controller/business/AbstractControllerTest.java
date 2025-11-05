@@ -75,21 +75,21 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     }
 
     @Test
-    void getAll_return_200_with_User() throws Exception {
+    void getAll_Bulk_return_200_with_User() throws Exception {
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getAll_return_200_with_Admin() throws Exception {
+    void getAll_Bulk_return_200_with_Admin() throws Exception {
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getAll_return_400_with_no_token() throws Exception {
+    void getAll_Bulk_return_400_with_no_token() throws Exception {
         sendRequest(HttpMethod.GET, getApiPath() + "/all")
                 .andDo(print())
                 .andExpect(status().is(400));
