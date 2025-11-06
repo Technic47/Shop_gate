@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.LinkedMultiValueMap;
 import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
 
 import java.util.List;
@@ -63,7 +64,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
 
-        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, headers, null)
+        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, new LinkedMultiValueMap<>(), headers, null)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -80,7 +81,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
 
-        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, headers, null)
+        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_TOKEN, new LinkedMultiValueMap<>(), headers, null)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -106,7 +107,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
 
-        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_ROLES, headers, null)
+        MvcResult mvcResult = sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_ROLES, new LinkedMultiValueMap<>(), headers, null)
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

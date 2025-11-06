@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
-import ru.kuznetsov.shop.gate.util.TokenUtils;
+import ru.kuznetsov.shop.gate.util.RequestParamUtils;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.StockContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
@@ -27,17 +27,13 @@ public class StockController extends AbstractController<StockDto, StockContract>
     @Override
     public ResponseEntity<Collection<StockDto>> getAllForUser(String token, @Nullable Map<String, String> reqParam) {
         if (hasAccess(token, GET)) {
-            UUID userId = TokenUtils.getUserIdFromToken(token);
+            UUID userId = getUserIdFromToken(token);
 
-            if (reqParam != null) {
-                return ResponseEntity.ok(contractService.getAll(
-                        Long.parseLong(reqParam.get("productId")),
-                        Long.parseLong(reqParam.get("storeId")),
-                        userId));
-            } else {
-                return ResponseEntity.ok(contractService.getAll(null, null, userId));
-            }
-
+            return ResponseEntity.ok(contractService.getAll(
+                    RequestParamUtils.getParamLongValue(reqParam, "productId"),
+                    RequestParamUtils.getParamLongValue(reqParam, "storeId"),
+                    userId
+            ));
         } else return ResponseEntity.status(401).build();
     }
 }

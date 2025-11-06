@@ -3,6 +3,8 @@ package ru.kuznetsov.shop.gate.controller.business;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import ru.kuznetsov.shop.represent.contract.business.StockContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
 
@@ -18,14 +20,24 @@ class StockControllerTest extends AbstractControllerTest<StockDto, StockContract
 
     @Test
     void getAllByStoreId_return_200_with_user() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        long storeId = 1L;
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("storeId", Long.toString(storeId));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), requestParams, null, TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void getAllByStoreId_return_200_with_admin() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+        long storeId = 1L;
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("storeId", Long.toString(storeId));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), requestParams, null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -36,28 +48,38 @@ class StockControllerTest extends AbstractControllerTest<StockDto, StockContract
                 .when(authService)
                 .isTokenValid(any(String.class));
 
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/store", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().is(401));
     }
 
     @Test
     void getAllByStoreId_return_400_with_user_no_token() throws Exception {
-        sendRequest(HttpMethod.GET, getApiPath() + "/1/store")
+        sendRequest(HttpMethod.GET, getApiPath())
                 .andDo(print())
                 .andExpect(status().is(400));
     }
 
     @Test
     void getAllByProductId_return_200_with_user() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        long productId = 1L;
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("productId", Long.toString(productId));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), requestParams, null, TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void getAllByProductId_return_200_with_admin() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+        long productId = 1L;
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("productId", Long.toString(productId));
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), requestParams, null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -68,14 +90,14 @@ class StockControllerTest extends AbstractControllerTest<StockDto, StockContract
                 .when(authService)
                 .isTokenValid(any(String.class));
 
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/product", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().is(401));
     }
 
     @Test
     void getAllByProductId_return_400_with_user_no_token() throws Exception {
-        sendRequest(HttpMethod.GET, getApiPath() + "/1/product")
+        sendRequest(HttpMethod.GET, getApiPath())
                 .andDo(print())
                 .andExpect(status().is(400));
     }

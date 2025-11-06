@@ -13,6 +13,7 @@ import ru.kuznetsov.shop.represent.dto.AbstractDto;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.*;
 
@@ -36,26 +37,26 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
         } else return ResponseEntity.status(401).build();
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public abstract ResponseEntity<Collection<E>> getAllForUser(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Nullable @RequestParam(required = false) Map<String, String> reqParam);
 
-    @GetMapping("/all/bulk")
+    @GetMapping("/bulk")
     public ResponseEntity<Collection<E>> getAllBulk(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         if (hasAccess(token, GET_ALL_BULK)) {
             return ResponseEntity.ok(contractService.getAll());
         } else return ResponseEntity.status(401).build();
     }
 
-    @PostMapping("/add")
+    @PostMapping()
     public ResponseEntity<E> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody E entity) {
         if (hasAccess(token, SAVE)) {
             return ResponseEntity.ok(contractService.create(entity));
         } else return ResponseEntity.status(401).build();
     }
 
-    @PostMapping("/add/batch")
+    @PostMapping("/batch")
     public ResponseEntity<Collection<E>> addBatch(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody Collection<E> entity) {
         if (hasAccess(token, SAVE)) {
             return ResponseEntity.ok(contractService.createBatch(entity));
@@ -84,5 +85,9 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
                     .anyMatch(value -> value.equals(true));
 
         } else return false;
+    }
+
+    protected UUID getUserIdFromToken(String token) {
+        return authService.getUserInfo(token).getId();
     }
 }

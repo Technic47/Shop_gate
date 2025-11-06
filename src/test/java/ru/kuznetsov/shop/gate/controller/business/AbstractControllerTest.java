@@ -6,9 +6,11 @@ import org.springframework.http.HttpMethod;
 import ru.kuznetsov.shop.gate.controller.AbstractIntegrationTest;
 import ru.kuznetsov.shop.represent.contract.business.AbstractContract;
 import ru.kuznetsov.shop.represent.dto.AbstractDto;
+import ru.kuznetsov.shop.represent.dto.auth.UserDto;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -25,6 +27,10 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
         doReturn(true)
                 .when(authService)
                 .isTokenValid(any(String.class));
+
+        doReturn(UserDto.builder().id(UUID.randomUUID()).build())
+                .when(authService)
+                .getUserInfo(any(String.class));
 
         doReturn(List.of("USER"))
                 .when(authService)
@@ -75,22 +81,22 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     }
 
     @Test
-    void getAll_Bulk_return_200_with_User() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_USER_LOGIN, TEST_USER_PASSWORD)
+    void getAll_Bulk_return_401_with_User() throws Exception {
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/bulk", TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().is(401));
     }
 
     @Test
     void getAll_Bulk_return_200_with_Admin() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/all", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/bulk", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void getAll_Bulk_return_400_with_no_token() throws Exception {
-        sendRequest(HttpMethod.GET, getApiPath() + "/all")
+        sendRequest(HttpMethod.GET, getApiPath())
                 .andDo(print())
                 .andExpect(status().is(400));
     }
@@ -99,7 +105,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     void add_return_401_with_User() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add", mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.POST, getApiPath(), mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().is(401));
     }
@@ -112,7 +118,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
                 .when(getContract())
                 .create((E) any(AbstractDto.class));
 
-        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add", mockDto, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.POST, getApiPath(), mockDto, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -121,7 +127,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     void add_return_400_with_no_token() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequest(HttpMethod.POST, getApiPath() + "/add", mockDto)
+        sendRequest(HttpMethod.POST, getApiPath(), mockDto)
                 .andDo(print())
                 .andExpect(status().is(400));
     }
@@ -130,7 +136,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     void addBatch_return_401_with_User() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add/batch", List.of(mockDto), TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/batch", List.of(mockDto), TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().is(401));
     }
@@ -143,7 +149,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
                 .when(getContract())
                 .createBatch(any(Collection.class));
 
-        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/add/batch", List.of(mockDto), TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/batch", List.of(mockDto), TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -152,7 +158,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
     void addBatch_return_400_with_no_token() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequest(HttpMethod.POST, getApiPath() + "/add/batch", List.of(mockDto))
+        sendRequest(HttpMethod.POST, getApiPath() + "/batch", List.of(mockDto))
                 .andDo(print())
                 .andExpect(status().is(400));
     }

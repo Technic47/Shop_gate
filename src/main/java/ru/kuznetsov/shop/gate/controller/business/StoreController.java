@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
-import ru.kuznetsov.shop.gate.util.TokenUtils;
+import ru.kuznetsov.shop.gate.util.RequestParamUtils;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.StoreContract;
 import ru.kuznetsov.shop.represent.dto.StockDto;
@@ -28,17 +28,13 @@ public class StoreController extends AbstractController<StoreDto, StoreContract>
     @Override
     public ResponseEntity<Collection<StoreDto>> getAllForUser(String token, @Nullable Map<String, String> reqParam) {
         if (hasAccess(token, GET)) {
-            UUID userId = TokenUtils.getUserIdFromToken(token);
+            UUID userId = getUserIdFromToken(token);
 
-            if (reqParam != null) {
-                return ResponseEntity.ok(contractService.getAll(
-                        Long.parseLong(reqParam.get("id")),
-                        reqParam.get("name"),
-                        Long.parseLong(reqParam.get("addressId")),
-                        userId));
-            } else {
-                return ResponseEntity.ok(contractService.getAll(null, null, null, userId));
-            }
+            return ResponseEntity.ok(contractService.getAll(
+                    RequestParamUtils.getParamLongValue(reqParam, "id"),
+                    RequestParamUtils.getParamStringValue(reqParam, "name"),
+                    RequestParamUtils.getParamLongValue(reqParam, "addressId"),
+                    userId));
 
         } else return ResponseEntity.status(401).build();
     }
