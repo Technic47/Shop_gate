@@ -18,7 +18,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractContract<E>> extends AbstractIntegrationTest {
+public abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractContract<E>> extends AbstractIntegrationTest {
+
+    protected static final UUID MOCK_USER_ID = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
@@ -28,7 +30,7 @@ abstract class AbstractControllerTest<E extends AbstractDto, S extends AbstractC
                 .when(authService)
                 .isTokenValid(any(String.class));
 
-        doReturn(UserDto.builder().id(UUID.randomUUID()).build())
+        doReturn(UserDto.builder().id(MOCK_USER_ID).build())
                 .when(authService)
                 .getUserInfo(any(String.class));
 
