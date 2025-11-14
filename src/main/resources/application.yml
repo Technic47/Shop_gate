@@ -45,3 +45,8 @@ logging:
 
 microservices:
   baseUrl: ${BASE_URL}
+
+web:
+  client:
+    retry: 300
+    max-attempts: 3
