@@ -83,38 +83,6 @@ class StoreControllerTest extends AbstractControllerTest<StoreDto, StoreContract
                 .andExpect(status().is(400));
     }
 
-    @Test
-    void getAllStockByStoreId_return_200_with_user() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/stock", TEST_USER_LOGIN, TEST_USER_PASSWORD)
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getAllStockByStoreId_return_200_with_admin() throws Exception {
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/stock", TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getAllStockByStoreId_return_401_with_user_invalid_token() throws Exception {
-        doReturn(false)
-                .when(authService)
-                .isTokenValid(any(String.class));
-
-        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/1/stock", TEST_USER_LOGIN, TEST_USER_PASSWORD)
-                .andDo(print())
-                .andExpect(status().is(401));
-    }
-
-    @Test
-    void getAllStockByStoreId_return_400_with_user_no_token() throws Exception {
-        sendRequest(HttpMethod.GET, getApiPath() + "/1/stock")
-                .andDo(print())
-                .andExpect(status().is(400));
-    }
-
     @Override
     protected StoreContract getContract() {
         return contract;

@@ -1,14 +1,13 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
 import jakarta.annotation.Nullable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
 import ru.kuznetsov.shop.gate.util.RequestParamUtils;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.business.StoreContract;
-import ru.kuznetsov.shop.represent.dto.StockDto;
 import ru.kuznetsov.shop.represent.dto.StoreDto;
 
 import java.util.Collection;
@@ -36,13 +35,6 @@ public class StoreController extends AbstractController<StoreDto, StoreContract>
                     RequestParamUtils.getParamLongValue(reqParam, "addressId"),
                     userId));
 
-        } else return ResponseEntity.status(401).build();
-    }
-
-    @GetMapping("/{id}/stock")
-    public ResponseEntity<Collection<StockDto>> getAllStockByStoreId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable long id) {
-        if (hasAccess(token, GET)) {
-            return ResponseEntity.ok(contractService.getAllStockByStoreId(id));
         } else return ResponseEntity.status(401).build();
     }
 }
