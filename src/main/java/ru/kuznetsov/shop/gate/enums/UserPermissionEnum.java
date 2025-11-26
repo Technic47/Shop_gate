@@ -1,5 +1,6 @@
 package ru.kuznetsov.shop.gate.enums;
 
 public enum UserPermissionEnum {
-    GET, GET_ALL, GET_ALL_BULK, SAVE, UPDATE, DELETE
+    GET, GET_ALL, GET_ALL_BULK, SAVE, UPDATE, DELETE,
+    ORDER_SAVE, ORDER_UPDATE, ORDER_DELETE
 }

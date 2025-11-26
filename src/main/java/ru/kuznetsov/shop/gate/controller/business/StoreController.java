@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
+import static ru.kuznetsov.shop.gate.util.RequestParamUtils.*;
 
 @RestController
 @RequestMapping("/store")
@@ -30,9 +31,9 @@ public class StoreController extends AbstractController<StoreDto, StoreContract>
             UUID userId = getUserIdFromToken(token);
 
             return ResponseEntity.ok(contractService.getAll(
-                    RequestParamUtils.getParamLongValue(reqParam, "id"),
-                    RequestParamUtils.getParamStringValue(reqParam, "name"),
-                    RequestParamUtils.getParamLongValue(reqParam, "addressId"),
+                    RequestParamUtils.getParamLongValue(reqParam, ID_PARAMETER),
+                    RequestParamUtils.getParamStringValue(reqParam, NAME_PARAMETER),
+                    RequestParamUtils.getParamLongValue(reqParam, ADDRESS_ID_PARAMETER),
                     userId));
 
         } else return ResponseEntity.status(401).build();

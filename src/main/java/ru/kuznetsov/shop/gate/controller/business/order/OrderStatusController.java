@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
+import static ru.kuznetsov.shop.gate.util.RequestParamUtils.ORDER_ID_PARAMETER;
 
 @RestController
 @RequestMapping("/order/status")
@@ -30,7 +31,7 @@ public class OrderStatusController extends AbstractController<OrderStatusDto, Or
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Nullable Map<String, String> reqParam) {
         if (hasAccess(token, GET)) {
-            Long orderId = RequestParamUtils.getParamLongValue(reqParam, "orderId");
+            Long orderId = RequestParamUtils.getParamLongValue(reqParam, ORDER_ID_PARAMETER);
 
             if (orderId != null) {
                 return ResponseEntity.ok(contractService.getAllByOrderId(orderId));

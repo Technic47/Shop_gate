@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
+import static ru.kuznetsov.shop.gate.util.RequestParamUtils.PRODUCT_ID_PARAMETER;
+import static ru.kuznetsov.shop.gate.util.RequestParamUtils.STORE_ID_PARAMETER;
 
 @RestController
 @RequestMapping("/stock")
@@ -30,8 +32,8 @@ public class StockController extends AbstractController<StockDto, StockContract>
             UUID userId = getUserIdFromToken(token);
 
             return ResponseEntity.ok(contractService.getAll(
-                    RequestParamUtils.getParamLongValue(reqParam, "productId"),
-                    RequestParamUtils.getParamLongValue(reqParam, "storeId"),
+                    RequestParamUtils.getParamLongValue(reqParam, PRODUCT_ID_PARAMETER),
+                    RequestParamUtils.getParamLongValue(reqParam, STORE_ID_PARAMETER),
                     userId
             ));
         } else return ResponseEntity.status(401).build();

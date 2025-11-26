@@ -6,7 +6,7 @@ services:
       - "../.env"
     build:
       context: .
-    container_name: order_module
+    container_name: gate_module
     restart: always
     ports:
       - "8080:8080"

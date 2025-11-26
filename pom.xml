@@ -11,7 +11,7 @@
 
     <groupId>ru.kuznetsov.shop</groupId>
     <artifactId>Gate</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>Gate</name>
     <description>Gate</description>
 
@@ -21,6 +21,7 @@
         <keycloak-admin-client.version>26.0.7</keycloak-admin-client.version>
         <nimbus.version>10.5</nimbus.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

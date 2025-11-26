@@ -51,31 +51,22 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     @PostMapping()
     public ResponseEntity<E> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody E entity) {
-        if (hasAccess(token, SAVE)) {
-            return ResponseEntity.ok(contractService.create(entity));
-        } else return ResponseEntity.status(401).build();
+        return addInternal(token, entity, SAVE);
     }
 
     @PostMapping("/batch")
     public ResponseEntity<Collection<E>> addBatch(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody Collection<E> entity) {
-        if (hasAccess(token, SAVE)) {
-            return ResponseEntity.ok(contractService.createBatch(entity));
-        } else return ResponseEntity.status(401).build();
+        return addBatchInternal(token, entity, SAVE);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<E> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id, @RequestBody E entity) {
-        if (hasAccess(token, UPDATE)) {
-            return new ResponseEntity("Method not implemented yet", HttpStatus.NOT_IMPLEMENTED);
-        } else return ResponseEntity.status(401).build();
+        return updateInternal(token, id, entity, UPDATE);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
-        if (hasAccess(token, UPDATE)) {
-            contractService.delete(id);
-            return ResponseEntity.ok().build();
-        } else return ResponseEntity.status(401).build();
+        return deleteInternal(token, id, DELETE);
     }
 
     protected Boolean hasAccess(String token, UserPermissionEnum permission) {
@@ -89,5 +80,30 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     protected UUID getUserIdFromToken(String token) {
         return authService.getUserInfo(token).getId();
+    }
+
+    protected ResponseEntity<E> addInternal(String token, E entity, UserPermissionEnum permission) {
+        if (hasAccess(token, permission)) {
+            return ResponseEntity.ok(contractService.create(entity));
+        } else return ResponseEntity.status(401).build();
+    }
+
+    protected ResponseEntity<Collection<E>> addBatchInternal(String token, Collection<E> entity, UserPermissionEnum permission) {
+        if (hasAccess(token, permission)) {
+            return ResponseEntity.ok(contractService.createBatch(entity));
+        } else return ResponseEntity.status(401).build();
+    }
+
+    protected ResponseEntity<E> updateInternal(String token, Long id, E entity, UserPermissionEnum permission) {
+        if (hasAccess(token, permission)) {
+            return new ResponseEntity("Method not implemented yet", HttpStatus.NOT_IMPLEMENTED);
+        } else return ResponseEntity.status(401).build();
+    }
+
+    protected ResponseEntity<Collection<E>> deleteInternal(String token, Long id, UserPermissionEnum permission) {
+        if (hasAccess(token, permission)) {
+            contractService.delete(id);
+            return ResponseEntity.ok().build();
+        } else return ResponseEntity.status(401).build();
     }
 }

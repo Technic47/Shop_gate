@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
+import static ru.kuznetsov.shop.gate.util.RequestParamUtils.ORDER_ID_PARAMETER;
 
 @RestController
 @RequestMapping("/order/bucket")
@@ -34,7 +35,7 @@ public class BucketItemController extends AbstractController<BucketItemDto, Buck
     public ResponseEntity<Collection<BucketItemDto>> getAllForUser(String token, @Nullable Map<String, String> reqParam) {
         if (hasAccess(token, GET)) {
             UUID userId = getUserIdFromToken(token);
-            Long orderId = RequestParamUtils.getParamLongValue(reqParam, "orderId");
+            Long orderId = RequestParamUtils.getParamLongValue(reqParam, ORDER_ID_PARAMETER);
 
             if (orderId != null) {
                 return orderContract.getById(orderId).getCustomerId().equals(userId.toString()) ?

@@ -19,3 +19,14 @@ permissions:
     DELETE:
       - ADMIN
       - SELLER
+
+    ORDER_SAVE:
+      - USER
+      - ADMIN
+    ORDER_UPDATE:
+      - USER
+      - SELLER
+      - ADMIN
+    ORDER_DELETE:
+      - SELLER
+      - ADMIN
