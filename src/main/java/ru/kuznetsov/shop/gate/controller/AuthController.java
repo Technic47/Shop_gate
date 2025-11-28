@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
 import ru.kuznetsov.shop.represent.dto.auth.TokenDto;
+import ru.kuznetsov.shop.represent.dto.auth.UserDto;
 
 import java.util.Collection;
 
@@ -35,5 +36,10 @@ public class AuthController {
     @PostMapping("/check/roles")
     public ResponseEntity<Collection<String>> checkRoles(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         return ResponseEntity.ok(authService.getUserRoles(token));
+    }
+
+    @PostMapping("/userInfo")
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return ResponseEntity.ok(authService.getUserInfo(token));
     }
 }

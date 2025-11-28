@@ -12,6 +12,8 @@ import ru.kuznetsov.shop.represent.dto.ProductCategoryDto;
 import java.util.Collection;
 import java.util.Map;
 
+import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.PRODUCT_CATEGORY_GET_ALL_BULK;
+
 @RestController
 @RequestMapping("/product-category")
 public class ProductCategoryController extends AbstractController<ProductCategoryDto, ProductCategoryContract> {
@@ -22,6 +24,6 @@ public class ProductCategoryController extends AbstractController<ProductCategor
 
     @Override
     public ResponseEntity<Collection<ProductCategoryDto>> getAllForUser(String token, @Nullable Map<String, String> reqParam) {
-        return getAllBulk(token);
+        return getAllBulkInternal(token, PRODUCT_CATEGORY_GET_ALL_BULK);
     }
 }

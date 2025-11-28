@@ -6,12 +6,12 @@
     <parent>
         <groupId>io.github.technic47</groupId>
         <artifactId>shop-spring-boot-starter</artifactId>
-        <version>1.0.19</version>
+        <version>1.0.20</version>
     </parent>
 
     <groupId>ru.kuznetsov.shop</groupId>
     <artifactId>Gate</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>Gate</name>
     <description>Gate</description>
 

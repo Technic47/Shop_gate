@@ -1,6 +1,7 @@
 package ru.kuznetsov.shop.gate.util;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class RequestParamUtils {
 
@@ -10,6 +11,8 @@ public class RequestParamUtils {
     public static final String ORDER_ID_PARAMETER = "orderId";
     public static final String PRODUCT_ID_PARAMETER = "productId";
     public static final String STORE_ID_PARAMETER = "storeId";
+    public static final String OWNER_ID_PARAMETER = "ownerId";
+    public static final String CATEGORY_ID_PARAMETER = "categoryId";
 
     public static String getParamStringValue(Map<String, String> reqParam, String paramName) {
         String value = null;
@@ -26,5 +29,10 @@ public class RequestParamUtils {
     public static Long getParamLongValue(Map<String, String> reqParam, String paramName) {
         String paramStringValue = getParamStringValue(reqParam, paramName);
         return paramStringValue == null ? null : Long.parseLong(paramStringValue);
+    }
+
+    public static UUID getParamUUIDValue(Map<String, String> reqParam, String paramName) {
+        String paramStringValue = getParamStringValue(reqParam, paramName);
+        return paramStringValue == null ? null : UUID.fromString(paramStringValue);
     }
 }

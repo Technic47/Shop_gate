@@ -44,9 +44,7 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     @GetMapping("/bulk")
     public ResponseEntity<Collection<E>> getAllBulk(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        if (hasAccess(token, GET_ALL_BULK)) {
-            return ResponseEntity.ok(contractService.getAll());
-        } else return ResponseEntity.status(401).build();
+        return getAllBulkInternal(token, GET_ALL_BULK);
     }
 
     @PostMapping()
@@ -80,6 +78,12 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     protected UUID getUserIdFromToken(String token) {
         return authService.getUserInfo(token).getId();
+    }
+
+    protected ResponseEntity<Collection<E>> getAllBulkInternal(String token, UserPermissionEnum permission) {
+        if (hasAccess(token, permission)) {
+            return ResponseEntity.ok(contractService.getAll());
+        } else return ResponseEntity.status(401).build();
     }
 
     protected ResponseEntity<E> addInternal(String token, E entity, UserPermissionEnum permission) {

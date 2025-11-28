@@ -20,6 +20,16 @@ permissions:
       - ADMIN
       - SELLER
 
+    PRODUCT_GET_ALL_CARDS:
+      - ADMIN
+      - USER
+      - SELLER
+
+    PRODUCT_CATEGORY_GET_ALL_BULK:
+      - ADMIN
+      - USER
+      - SELLER
+
     ORDER_SAVE:
       - USER
       - ADMIN
