@@ -23,6 +23,8 @@ import static ru.kuznetsov.shop.gate.util.RequestParamUtils.*;
 @RequestMapping("/product")
 public class ProductController extends AbstractController<ProductDto, ProductContract> {
 
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
+
     private final ProductContract productContract;
 
     public ProductController(ProductContract contractService, AuthContract authService, PermissionsConfig permissionsConfig, ProductContract productContract) {
@@ -62,22 +64,26 @@ public class ProductController extends AbstractController<ProductDto, ProductCon
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam(required = false) String ownerId,
             @RequestParam(required = false) Long categoryId,
-            @RequestParam int pageNum,
-            @RequestParam int pageSize,
+            @RequestParam int pageNumber,
+            @RequestParam(required = false) Integer pageSize,
             @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String sortDirection
+            @RequestParam(required = false) String order
     ) {
         if (hasAccess(token, PRODUCT_GET_ALL_CARDS)) {
-            if (pageNum < 0) {
+            if (pageNumber < 0) {
                 return ResponseEntity.status(400).build();
             } else {
                 if (ownerId != null || categoryId != null) {
                     return ResponseEntity.ok(productContract.getProductCardDtoByCategoryOrOwnerIdPageable(
                             (ownerId == null || ownerId.isEmpty()) ? null : UUID.fromString(ownerId),
-                            categoryId, pageNum, pageSize, sortBy, sortDirection
+                            categoryId,
+                            pageNumber,
+                            pageSize == null ? DEFAULT_PAGE_SIZE : pageSize,
+                            sortBy,
+                            order
                     ));
                 } else return ResponseEntity.ok(productContract.getProductCardDtoPageable(
-                        pageNum, pageSize, sortBy, sortDirection
+                        pageNumber, pageSize, sortBy, order
                 ));
             }
         } else return ResponseEntity.status(401).build();
