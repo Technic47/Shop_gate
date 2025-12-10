@@ -2,7 +2,9 @@ package ru.kuznetsov.shop.gate.controller.business;
 
 import jakarta.annotation.Nullable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
 import ru.kuznetsov.shop.gate.util.RequestParamUtils;
@@ -37,5 +39,10 @@ public class StockController extends AbstractController<StockDto, StockContract>
                     userId
             ));
         } else return ResponseEntity.status(401).build();
+    }
+
+    @GetMapping("/reservation")
+    public ResponseEntity<Collection<StockDto>> getAllByReservationOrderId(@RequestParam Long reservationOrderId) {
+        return ResponseEntity.ok(contractService.getAllByReservationOrderId(reservationOrderId));
     }
 }
