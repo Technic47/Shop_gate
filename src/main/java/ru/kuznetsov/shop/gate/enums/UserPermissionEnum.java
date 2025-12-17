@@ -7,5 +7,7 @@ public enum UserPermissionEnum {
 
     PRODUCT_CATEGORY_GET_ALL_BULK,
 
+    STOCK_GET_BY_RESERVATION,
+
     ORDER_SAVE, ORDER_UPDATE, ORDER_DELETE
 }

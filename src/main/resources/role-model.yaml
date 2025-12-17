@@ -30,6 +30,9 @@ permissions:
       - USER
       - SELLER
 
+    STOCK_GET_BY_RESERVATION:
+      - SELLER
+
     ORDER_SAVE:
       - USER
       - ADMIN
