@@ -10,12 +10,14 @@ import ru.kuznetsov.shop.gate.util.RequestParamUtils;
 import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.contract.order.OrderStatusContract;
 import ru.kuznetsov.shop.represent.dto.order.OrderStatusDto;
+import ru.kuznetsov.shop.represent.enums.OrderStatusType;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.GET;
+import static ru.kuznetsov.shop.gate.enums.UserPermissionEnum.ORDER_GET;
 import static ru.kuznetsov.shop.gate.util.RequestParamUtils.ORDER_ID_PARAMETER;
 
 @RestController
@@ -49,6 +51,15 @@ public class OrderStatusController extends AbstractController<OrderStatusDto, Or
             Optional<OrderStatusDto> lastByOrderId = contractService.getLastByOrderId(orderId);
 
             return lastByOrderId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(204).build());
+        } else return ResponseEntity.status(401).build();
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Collection<OrderStatusDto>> getLast(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestParam("status") OrderStatusType status) {
+        if (hasAccess(token, ORDER_GET)) {
+            return ResponseEntity.ok(contractService.getAllByStatus(status));
         } else return ResponseEntity.status(401).build();
     }
 }
