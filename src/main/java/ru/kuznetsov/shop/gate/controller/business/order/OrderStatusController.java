@@ -55,7 +55,7 @@ public class OrderStatusController extends AbstractController<OrderStatusDto, Or
     }
 
     @GetMapping("/status")
-    public ResponseEntity<Collection<OrderStatusDto>> getLast(
+    public ResponseEntity<Collection<OrderStatusDto>> getByStatus(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam("status") OrderStatusType status) {
         if (hasAccess(token, ORDER_GET)) {
