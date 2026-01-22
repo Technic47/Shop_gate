@@ -14,4 +14,6 @@ WORKDIR /app
 
 COPY --from=builder /app/target/Gate_module.jar /app/app.jar
 
+ENV JAVA_TOOL_OPTIONS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
