@@ -1,5 +1,5 @@
 spring:
   application:
-    name: gate
+    name: ${GATE_MODULE_NAME}
   config:
     import: optional:configserver:${CONFIG_SERVER_URL}
