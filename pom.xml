@@ -6,12 +6,12 @@
     <parent>
         <groupId>io.github.technic47</groupId>
         <artifactId>shop-spring-boot-starter</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.4</version>
     </parent>
 
     <groupId>ru.kuznetsov.shop</groupId>
     <artifactId>Gate</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <name>Gate</name>
     <description>Gate</description>
 
@@ -46,10 +46,15 @@
             <version>${nimbus.version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>io.github.technic47</groupId>-->
+<!--            <artifactId>data-access</artifactId>-->
+<!--            <version>${data-access.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.github.technic47</groupId>
-            <artifactId>data-access</artifactId>
-            <version>${data-access.version}</version>
+            <artifactId>data-access-feign</artifactId>
+            <version>${data-access-feign.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.technic47</groupId>
