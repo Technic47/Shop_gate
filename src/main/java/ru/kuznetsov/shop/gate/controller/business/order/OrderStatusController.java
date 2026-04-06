@@ -1,6 +1,8 @@
 package ru.kuznetsov.shop.gate.controller.business.order;
 
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ import static ru.kuznetsov.shop.gate.util.RequestParamUtils.ORDER_ID_PARAMETER;
 @RestController
 @RequestMapping("/order/status")
 public class OrderStatusController extends AbstractController<OrderStatusDto, OrderStatusContract> {
+
+    Logger logger = LoggerFactory.getLogger(OrderStatusController.class);
 
     public OrderStatusController(OrderStatusContract contractService, AuthContract authService, PermissionsConfig permissionsConfig) {
         super(contractService, authService, permissionsConfig);
@@ -57,9 +61,13 @@ public class OrderStatusController extends AbstractController<OrderStatusDto, Or
     @GetMapping("/status")
     public ResponseEntity<Collection<OrderStatusDto>> getByStatus(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestParam("status") OrderStatusType status) {
+            @RequestParam("status") OrderStatusType status,
+            @RequestParam(value = "dateTime", required = false) String dateTime,
+            @RequestParam(value = "direction", required = false) String direction) {
         if (hasAccess(token, ORDER_GET)) {
-            return ResponseEntity.ok(contractService.getAllByStatus(status));
+            logger.info("Getting order status by status");
+            logger.info("Parameters: Status - {}, dateTime - {}, direction - {}", status, dateTime, direction);
+            return ResponseEntity.ok(contractService.getAllByStatus(status, dateTime, direction));
         } else return ResponseEntity.status(401).build();
     }
 }

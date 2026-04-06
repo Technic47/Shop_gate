@@ -9,6 +9,7 @@ import ru.kuznetsov.shop.represent.contract.auth.AuthContract;
 import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
 import ru.kuznetsov.shop.represent.dto.auth.TokenDto;
 import ru.kuznetsov.shop.represent.dto.auth.UserDto;
+import ru.kuznetsov.shop.represent.dto.auth.UserRepresentationDto;
 
 import java.util.Collection;
 
@@ -41,5 +42,10 @@ public class AuthController {
     @PostMapping("/userInfo")
     public ResponseEntity<UserDto> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         return ResponseEntity.ok(authService.getUserInfo(token));
+    }
+
+    @PostMapping("/user")
+    public void createUser(@RequestBody UserRepresentationDto newUser){
+        authService.createUser(newUser);
     }
 }
