@@ -45,7 +45,12 @@ public class AuthController {
     }
 
     @PostMapping("/user")
-    public void createUser(@RequestBody UserRepresentationDto newUser){
-        authService.createUser(newUser);
+    public ResponseEntity<String> createUser(@RequestBody UserRepresentationDto newUser) {
+        try {
+            return ResponseEntity.ok(authService.createUser(newUser));
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка при создании пользователя. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
