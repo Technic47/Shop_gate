@@ -50,8 +50,8 @@ public class OrderController extends AbstractController<OrderDto, OrderContract>
     }
 
     @Override
-    public ResponseEntity<OrderDto> update(String token, Long id, OrderDto entity) {
-        return updateInternal(token, id, entity, ORDER_UPDATE);
+    public ResponseEntity<OrderDto> update(String token, OrderDto entity) {
+        return updateInternal(token, entity, ORDER_UPDATE);
     }
 
     @Override

@@ -63,11 +63,12 @@ public class OrderStatusController extends AbstractController<OrderStatusDto, Or
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam("status") OrderStatusType status,
             @RequestParam(value = "dateTime", required = false) String dateTime,
-            @RequestParam(value = "direction", required = false) String direction) {
+            @RequestParam(value = "direction", required = false) String direction,
+            @RequestParam(value = "limit", required = false) Integer limit) {
         if (hasAccess(token, ORDER_GET)) {
             logger.info("Getting order status by status");
-            logger.info("Parameters: Status - {}, dateTime - {}, direction - {}", status, dateTime, direction);
-            return ResponseEntity.ok(contractService.getAllByStatus(status, dateTime, direction));
+            logger.info("Parameters: Status - {}, dateTime - {}, direction - {}, limit - {}", status, dateTime, direction, limit);
+            return ResponseEntity.ok(contractService.getAllByStatus(status, dateTime, direction, limit));
         } else return ResponseEntity.status(401).build();
     }
 }

@@ -1,8 +1,9 @@
 package ru.kuznetsov.shop.gate.controller.business;
 
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kuznetsov.shop.gate.config.PermissionsConfig;
@@ -24,6 +25,8 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
     private final AuthContract authService;
     private final PermissionsConfig permissionsConfig;
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public AbstractController(S contractService, AuthContract authService, PermissionsConfig permissionsConfig) {
         this.contractService = contractService;
         this.authService = authService;
@@ -33,6 +36,7 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
     @GetMapping("/{id}")
     public ResponseEntity<E> getById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
         if (hasAccess(token, GET)) {
+            logger.info("GET entity by ID: {}", id);
             return ResponseEntity.ok(contractService.getById(id));
         } else return ResponseEntity.status(401).build();
     }
@@ -57,9 +61,9 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
         return addBatchInternal(token, entity, SAVE);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<E> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id, @RequestBody E entity) {
-        return updateInternal(token, id, entity, UPDATE);
+    @PutMapping
+    public ResponseEntity<E> update(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody E entity) {
+        return updateInternal(token, entity, UPDATE);
     }
 
     @DeleteMapping("/{id}")
@@ -88,24 +92,28 @@ public abstract class AbstractController<E extends AbstractDto, S extends Abstra
 
     protected ResponseEntity<E> addInternal(String token, E entity, UserPermissionEnum permission) {
         if (hasAccess(token, permission)) {
+            logger.info("Adding entity {}", entity);
             return ResponseEntity.ok(contractService.create(entity));
         } else return ResponseEntity.status(401).build();
     }
 
     protected ResponseEntity<Collection<E>> addBatchInternal(String token, Collection<E> entity, UserPermissionEnum permission) {
         if (hasAccess(token, permission)) {
+            logger.info("Adding entities {}", entity);
             return ResponseEntity.ok(contractService.createBatch(entity));
         } else return ResponseEntity.status(401).build();
     }
 
-    protected ResponseEntity<E> updateInternal(String token, Long id, E entity, UserPermissionEnum permission) {
+    protected ResponseEntity<E> updateInternal(String token, E entity, UserPermissionEnum permission) {
         if (hasAccess(token, permission)) {
-            return new ResponseEntity("Method not implemented yet", HttpStatus.NOT_IMPLEMENTED);
+            logger.info("Updating entity {}", entity);
+            return ResponseEntity.ok(contractService.update(entity));
         } else return ResponseEntity.status(401).build();
     }
 
     protected ResponseEntity<Collection<E>> deleteInternal(String token, Long id, UserPermissionEnum permission) {
         if (hasAccess(token, permission)) {
+            logger.info("Deleting entity {}", id);
             contractService.delete(id);
             return ResponseEntity.ok().build();
         } else return ResponseEntity.status(401).build();

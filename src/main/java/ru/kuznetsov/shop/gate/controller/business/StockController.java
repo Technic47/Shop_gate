@@ -45,6 +45,6 @@ public class StockController extends AbstractController<StockDto, StockContract>
             @RequestParam String reservationOrderId) {
         if (hasAccess(token, GET)) {
             return ResponseEntity.ok(contractService.getAllByReservationOrderId(Long.parseLong(reservationOrderId)));
-        }else return ResponseEntity.status(401).build();
+        } else return ResponseEntity.status(401).build();
     }
 }
