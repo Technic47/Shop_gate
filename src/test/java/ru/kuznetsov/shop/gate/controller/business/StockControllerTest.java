@@ -102,6 +102,50 @@ class StockControllerTest extends AbstractControllerTest<StockDto, StockContract
                 .andExpect(status().is(400));
     }
 
+    @Test
+    void getAllByReservationOrderId_return_200_with_user() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("reservationOrderId", "1");
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/reservation", params, null, TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByReservationOrderId_return_200_with_admin() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("reservationOrderId", "1");
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/reservation", params, null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByReservationOrderId_return_401_with_invalid_token() throws Exception {
+        doReturn(false)
+                .when(authService)
+                .isTokenValid(any(String.class));
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("reservationOrderId", "1");
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/reservation", params, null, TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().is(401));
+    }
+
+    @Test
+    void getAllByReservationOrderId_return_400_no_token() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("reservationOrderId", "1");
+
+        sendRequest(HttpMethod.GET, getApiPath() + "/reservation", params)
+                .andDo(print())
+                .andExpect(status().is(400));
+    }
+
     @Override
     protected StockContract getContract() {
         return contract;

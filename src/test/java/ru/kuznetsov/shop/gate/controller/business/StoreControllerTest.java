@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,27 +39,27 @@ class StoreControllerTest extends AbstractControllerTest<StoreDto, StoreContract
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(contract).getAll(eq(id), eq(name), eq(addressId), any(UUID.class));
+        verify(contract).getAll(eq(id), eq(name), eq(addressId), nullable(UUID.class));
     }
 
     @Test
     void getAllStores_return_200_with_user_no_arguments() throws Exception {
         doReturn(List.of(getMockDto()))
                 .when(contract)
-                .getAll(any(Long.class), any(String.class), any(Long.class), any(UUID.class));
+                .getAll(any(Long.class), any(String.class), any(Long.class), nullable(UUID.class));
 
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(contract).getAll(eq(null), eq(null), eq(null), any(UUID.class));
+        verify(contract).getAll(eq(null), eq(null), eq(null), nullable(UUID.class));
     }
 
     @Test
     void getAllStores_return_200_with_admin() throws Exception {
         doReturn(List.of(getMockDto()))
                 .when(contract)
-                .getAll(any(Long.class), any(String.class), any(Long.class), any(UUID.class));
+                .getAll(any(Long.class), any(String.class), any(Long.class), nullable(UUID.class));
 
         sendRequestWithAuthToken(HttpMethod.GET, getApiPath(), TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
                 .andDo(print())

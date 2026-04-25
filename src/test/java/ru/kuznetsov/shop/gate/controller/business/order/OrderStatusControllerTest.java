@@ -8,11 +8,13 @@ import org.springframework.util.MultiValueMap;
 import ru.kuznetsov.shop.gate.controller.business.AbstractControllerTest;
 import ru.kuznetsov.shop.represent.contract.order.OrderStatusContract;
 import ru.kuznetsov.shop.represent.dto.order.OrderStatusDto;
+import ru.kuznetsov.shop.represent.enums.OrderStatusType;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -140,6 +142,61 @@ class OrderStatusControllerTest extends AbstractControllerTest<OrderStatusDto, O
     @Test
     void getLast_return_400_with_user_no_token() throws Exception {
         sendRequest(HttpMethod.GET, getApiPath() + "/last")
+                .andDo(print())
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    void getByStatus_return_200_with_admin_status_only() throws Exception {
+        // ORDER_GET requires SELLER or ADMIN
+        doReturn(List.of(getMockDto()))
+                .when(contract)
+                .getAllByStatus(any(OrderStatusType.class), isNull(), isNull(), isNull());
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("status", OrderStatusType.CREATED.name());
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/status", params, null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(contract).getAllByStatus(OrderStatusType.CREATED, null, null, null);
+    }
+
+    @Test
+    void getByStatus_return_200_with_admin_all_params() throws Exception {
+        doReturn(List.of(getMockDto()))
+                .when(contract)
+                .getAllByStatus(any(OrderStatusType.class), any(), any(), any());
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("status", OrderStatusType.SHIPPED.name());
+        params.add("dateTime", "2026-01-01T00:00:00");
+        params.add("direction", "ASC");
+        params.add("limit", "10");
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/status", params, null, TEST_ADMIN_LOGIN, TEST_ADMIN_PASSWORD)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getByStatus_return_401_with_user() throws Exception {
+        // ORDER_GET requires SELLER or ADMIN — USER is denied
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("status", OrderStatusType.CREATED.name());
+
+        sendRequestWithAuthToken(HttpMethod.GET, getApiPath() + "/status", params, null, TEST_USER_LOGIN, TEST_USER_PASSWORD)
+                .andDo(print())
+                .andExpect(status().is(401));
+    }
+
+    @Test
+    void getByStatus_return_400_no_token() throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("status", OrderStatusType.CREATED.name());
+
+        sendRequest(HttpMethod.GET, getApiPath() + "/status", params)
                 .andDo(print())
                 .andExpect(status().is(400));
     }

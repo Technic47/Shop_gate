@@ -104,7 +104,7 @@ public abstract class AbstractControllerTest<E extends AbstractDto, S extends Ab
     }
 
     @Test
-    void add_return_401_with_User() throws Exception {
+    protected void add_return_401_with_User() throws Exception {
         E mockDto = getMockDto();
 
         sendRequestWithAuthToken(HttpMethod.POST, getApiPath(), mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
@@ -135,7 +135,7 @@ public abstract class AbstractControllerTest<E extends AbstractDto, S extends Ab
     }
 
     @Test
-    void addBatch_return_401_with_User() throws Exception {
+    protected void addBatch_return_401_with_User() throws Exception {
         E mockDto = getMockDto();
 
         sendRequestWithAuthToken(HttpMethod.POST, getApiPath() + "/batch", List.of(mockDto), TEST_USER_LOGIN, TEST_USER_PASSWORD)
@@ -166,28 +166,19 @@ public abstract class AbstractControllerTest<E extends AbstractDto, S extends Ab
     }
 
     @Test
-    void update_return_401_with_User() throws Exception {
+    protected void update_return_401_with_User() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequestWithAuthToken(HttpMethod.PUT, getApiPath() + "/1", mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
+        sendRequestWithAuthToken(HttpMethod.PUT, getApiPath(), mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
                 .andDo(print())
                 .andExpect(status().is(401));
     }
-
-//    @Test
-//    void update_return_200_with_Admin() throws Exception {
-//        E mockDto = getMockDto();
-//
-//        sendRequestWithAuthToken(HttpMethod.PUT, getApiPath() + "/1", mockDto, TEST_USER_LOGIN, TEST_USER_PASSWORD)
-//                .andDo(print())
-//                .andExpect(status().is(401));
-//    }
 
     @Test
     void update_return_400_with_no_token() throws Exception {
         E mockDto = getMockDto();
 
-        sendRequest(HttpMethod.PUT, getApiPath() + "/1", mockDto)
+        sendRequest(HttpMethod.PUT, getApiPath(), mockDto)
                 .andDo(print())
                 .andExpect(status().is(400));
     }

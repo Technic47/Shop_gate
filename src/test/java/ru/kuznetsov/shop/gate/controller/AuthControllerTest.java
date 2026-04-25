@@ -7,8 +7,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import ru.kuznetsov.shop.represent.dto.auth.LoginPasswordDto;
+import ru.kuznetsov.shop.represent.dto.auth.UserDto;
+import ru.kuznetsov.shop.represent.dto.auth.UserRepresentationDto;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,5 +127,56 @@ class AuthControllerTest extends AbstractIntegrationTest {
         sendRequest(HttpMethod.POST, AUTH_API_PATH + CHECK_ROLES)
                 .andDo(print())
                 .andExpect(status().is(400));
+    }
+
+    @Test
+    void getUserInfo_return_200_with_token() throws Exception {
+        doReturn(UserDto.builder().id(UUID.randomUUID()).username("testUser").build())
+                .when(authService)
+                .getUserInfo(any(String.class));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
+
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + "/userInfo", new LinkedMultiValueMap<>(), headers, null)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getUserInfo_return_400_no_token() throws Exception {
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + "/userInfo")
+                .andDo(print())
+                .andExpect(status().is(400));
+    }
+
+    @Test
+    void createUser_return_200_success() throws Exception {
+        UserRepresentationDto newUser = new UserRepresentationDto(
+                "testuser", "Test", "User", "test@test.com",
+                true, true, "testuser", "password123");
+
+        doReturn("new-user-id")
+                .when(authService)
+                .createUser(any(UserRepresentationDto.class));
+
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + "/user", newUser)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void createUser_return_500_on_service_exception() throws Exception {
+        UserRepresentationDto newUser = new UserRepresentationDto(
+                "testuser", "Test", "User", "test@test.com",
+                true, true, "testuser", "password123");
+
+        doThrow(new RuntimeException("Creation failed"))
+                .when(authService)
+                .createUser(any(UserRepresentationDto.class));
+
+        sendRequest(HttpMethod.POST, AUTH_API_PATH + "/user", newUser)
+                .andDo(print())
+                .andExpect(status().is(500));
     }
 }

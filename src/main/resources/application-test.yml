@@ -8,12 +8,23 @@ spring:
       group-id: test
 
   cache:
-    type: redis
+    type: none
 
-  data:
-    redis:
-      host: host.docker.internal
-      port: 6379
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
 
   security:
     oauth2:
@@ -45,3 +56,13 @@ logging:
 
 microservices:
   baseUrl: host.docker.internal
+
+service:
+  module-name:
+    address: address-service
+    order: order-service
+    product: product-service
+    product-category: product-category-service
+    stock: stock-service
+    store: store-service
+    operation: operation-service
